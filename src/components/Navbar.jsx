@@ -1,14 +1,16 @@
 import { Link, useLocation } from 'react-router-dom';
 import { useState } from 'react';
-import { useCart } from '../context/CartContext';
+import { useSelector } from 'react-redux';
+import { useTheme } from '../context/ThemeContext';
 
 const Navbar = () => {
     const location = useLocation();
     const [isMenuOpen, setIsMenuOpen] = useState(false);
-    const { cartItems } = useCart();
+    const cartItems = useSelector((state) => state.cart.cartItems);
+    const { theme, toggleTheme } = useTheme();
 
     const isActive = (path) => {
-        return location.pathname === path ? 'text-primary' : 'text-text-secondary hover:text-primary';
+        return location.pathname === path ? 'text-primary' : 'text-text-secondary hover:text-primary dark:text-gray-300 dark:hover:text-primary';
     }
 
     const cartItemCount = cartItems.reduce((acc, item) => acc + item.quantity, 0);
@@ -31,9 +33,21 @@ const Navbar = () => {
           <Link className={`text-sm font-medium transition-colors ${isActive('/products')}`} to="/products">Products</Link>
         </nav>
 
-        {/* Action Button & Cart */}
-        <div className="flex items-center gap-4">
-          <Link to="/cart" className="relative p-2 text-text-secondary hover:text-primary transition-colors">
+        {/* Action Buttons */}
+        <div className="flex items-center gap-3">
+          {/* Theme Toggle (useContext) */}
+          <button
+            onClick={toggleTheme}
+            className="p-2 rounded-lg text-text-secondary hover:text-primary hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-800 transition-colors"
+            title={`Switch to ${theme === 'light' ? 'dark' : 'light'} mode`}
+          >
+            <span className="material-symbols-outlined text-[20px]">
+              {theme === 'light' ? 'dark_mode' : 'light_mode'}
+            </span>
+          </button>
+
+          {/* Cart Icon (Redux state) */}
+          <Link to="/cart" className="relative p-2 text-text-secondary hover:text-primary dark:text-gray-300 transition-colors">
              <span className="material-symbols-outlined">shopping_cart</span>
              {cartItemCount > 0 && (
                 <span className="absolute top-0 right-0 flex h-4 w-4 items-center justify-center rounded-full bg-red-500 text-[10px] font-bold text-white">

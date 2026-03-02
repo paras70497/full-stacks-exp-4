@@ -1,14 +1,16 @@
 import { Link } from 'react-router-dom';
 import { productsData } from '../data/products';
-import { useCart } from '../context/CartContext';
+import { useSelector, useDispatch } from 'react-redux';
+import { addItem } from '../redux/cartSlice';
+import { useTheme } from '../context/ThemeContext';
 
 const Products = () => {
-  const { addToCart, cartItems } = useCart();
+  const dispatch = useDispatch();
+  const cartItems = useSelector((state) => state.cart.cartItems);
+  const { theme } = useTheme();
 
   const handleAddToCart = (product) => {
-    addToCart(product);
-    // Optional: Add simple alert or toast here
-    // alert(`${product.name} added to cart!`);
+    dispatch(addItem(product));
   };
 
   const isInCart = (id) => {
